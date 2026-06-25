@@ -1,4 +1,4 @@
-import { PlanTier, SubscriptionStatus, WorkspaceRole } from "@prisma/client";
+import { WorkspaceRole } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 
 function slugify(value: string) {
@@ -30,14 +30,7 @@ export async function ensureDefaultWorkspace(user: { id: string; name?: string |
         create: {
           name: `${baseName}'s Workspace`,
           slug,
-          default: true,
-          subscriptions: {
-            create: {
-              plan: PlanTier.FREE,
-              status: SubscriptionStatus.ACTIVE,
-              seats: 1
-            }
-          }
+          default: true
         }
       }
     },
@@ -48,13 +41,7 @@ export async function ensureDefaultWorkspace(user: { id: string; name?: string |
 export async function getActiveWorkspace(userId: string) {
   const membership = await prisma.workspaceMember.findFirst({
     where: { userId },
-    include: {
-      workspace: {
-        include: {
-          subscriptions: { orderBy: { createdAt: "desc" }, take: 1 }
-        }
-      }
-    },
+    include: { workspace: true },
     orderBy: [{ role: "asc" }, { createdAt: "asc" }]
   });
 

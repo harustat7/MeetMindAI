@@ -1,0 +1,26 @@
+DELETE FROM "AuditLog"
+WHERE "action" IN ('BILLING_CHECKOUT_CREATED', 'BILLING_PORTAL_OPENED', 'SUBSCRIPTION_UPDATED');
+
+DROP TABLE IF EXISTS "Subscription";
+
+ALTER TABLE "Workspace" DROP COLUMN IF EXISTS "stripeCustomerId";
+
+CREATE TYPE "AuditAction_new" AS ENUM (
+  'WORKSPACE_CREATED',
+  'MEMBER_INVITED',
+  'MEMBER_ROLE_CHANGED',
+  'MEETING_SUMMARIZED',
+  'MEETING_INDEXED',
+  'COMMENT_CREATED',
+  'KNOWLEDGE_CREATED',
+  'SSO_UPDATED'
+);
+
+ALTER TABLE "AuditLog"
+  ALTER COLUMN "action" TYPE "AuditAction_new"
+  USING "action"::text::"AuditAction_new";
+
+DROP TYPE "AuditAction";
+ALTER TYPE "AuditAction_new" RENAME TO "AuditAction";
+
+DROP TYPE IF EXISTS "SubscriptionStatus";

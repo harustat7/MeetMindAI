@@ -84,14 +84,7 @@ async function ensureDevUser() {
         create: {
           name: `${baseName}'s Workspace`,
           slug,
-          default: true,
-          subscriptions: {
-            create: {
-              plan: "FREE",
-              status: "ACTIVE",
-              seats: 1
-            }
-          }
+          default: true
         }
       }
     },

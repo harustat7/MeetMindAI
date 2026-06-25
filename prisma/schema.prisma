@@ -44,16 +44,6 @@ enum PlanTier {
   ENTERPRISE
 }
 
-enum SubscriptionStatus {
-  TRIALING
-  ACTIVE
-  PAST_DUE
-  CANCELED
-  UNPAID
-  INCOMPLETE
-  INCOMPLETE_EXPIRED
-}
-
 enum WorkspaceRole {
   OWNER
   ADMIN
@@ -65,9 +55,6 @@ enum AuditAction {
   WORKSPACE_CREATED
   MEMBER_INVITED
   MEMBER_ROLE_CHANGED
-  BILLING_CHECKOUT_CREATED
-  BILLING_PORTAL_OPENED
-  SUBSCRIPTION_UPDATED
   MEETING_SUMMARIZED
   MEETING_INDEXED
   COMMENT_CREATED
@@ -116,10 +103,8 @@ model Workspace {
   name                String
   slug                String              @unique
   plan                PlanTier            @default(FREE)
-  stripeCustomerId    String?             @unique
   default             Boolean             @default(false)
   members             WorkspaceMember[]
-  subscriptions       Subscription[]
   meetings            Meeting[]
   knowledgeDocuments  KnowledgeDocument[]
   comments            Comment[]
@@ -144,25 +129,6 @@ model WorkspaceMember {
 
   @@unique([workspaceId, userId])
   @@index([userId, role])
-}
-
-model Subscription {
-  id                   String             @id @default(cuid())
-  workspaceId          String
-  plan                 PlanTier           @default(FREE)
-  status               SubscriptionStatus @default(ACTIVE)
-  stripeSubscriptionId String?            @unique
-  stripePriceId        String?
-  currentPeriodStart   DateTime?
-  currentPeriodEnd     DateTime?
-  cancelAtPeriodEnd    Boolean            @default(false)
-  seats                Int                @default(1)
-  workspace            Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-
-  @@index([workspaceId, status])
-  @@index([plan])
 }
 
 model Account {
