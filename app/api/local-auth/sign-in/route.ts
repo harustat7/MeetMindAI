@@ -14,11 +14,9 @@ function localAuthEnabled() {
 }
 
 function getRedirectUrl(request: NextRequest, callbackUrl: FormDataEntryValue | null) {
-  const appUrl = process.env.APP_URL ?? process.env.NEXTAUTH_URL;
-  const baseUrl = appUrl ? new URL(appUrl) : new URL(request.url);
   const requestedPath = typeof callbackUrl === "string" && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard";
 
-  return new URL(requestedPath, baseUrl);
+  return new URL(requestedPath, request.url);
 }
 
 export async function POST(request: NextRequest) {

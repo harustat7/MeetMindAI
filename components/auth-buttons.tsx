@@ -31,7 +31,25 @@ export function AuthButtons({ localAuthEnabled, emailEnabled, googleEnabled, mic
         </div>
       ) : null}
 
-      {emailEnabled ? (
+      {localAuthEnabled ? (
+        <form action="/api/local-auth/sign-in" method="post" className="space-y-3">
+          <input type="hidden" name="callbackUrl" value="/dashboard" />
+          <div>
+            <Label htmlFor="local-email">Work email</Label>
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">Create or open your workspace with this email.</p>
+          </div>
+          <div className="space-y-2">
+            <Input id="local-name" name="name" type="text" placeholder="Your name" />
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Input id="local-email" name="email" type="email" placeholder="you@company.com" required />
+              <Button type="submit" aria-label="Continue with email" className="sm:w-32">
+                <ArrowRight className="h-4 w-4" />
+                Continue
+              </Button>
+            </div>
+          </div>
+        </form>
+      ) : emailEnabled ? (
         <form
           className="space-y-3"
           onSubmit={(event) => {
@@ -53,27 +71,9 @@ export function AuthButtons({ localAuthEnabled, emailEnabled, googleEnabled, mic
         </form>
       ) : null}
 
-      {localAuthEnabled && !emailEnabled ? (
-        <form action="/api/local-auth/sign-in" method="post" className="space-y-3">
-          <div>
-            <Label htmlFor="local-email">Work email</Label>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">Create or open your workspace with this email.</p>
-          </div>
-          <div className="space-y-2">
-            <Input id="local-name" name="name" type="text" placeholder="Your name" />
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Input id="local-email" name="email" type="email" placeholder="you@company.com" required />
-              <Button type="submit" aria-label="Continue with email" className="sm:w-32">
-                <ArrowRight className="h-4 w-4" />
-                Continue
-              </Button>
-            </div>
-          </div>
-        </form>
-      ) : null}
-
       {localAuthEnabled ? (
         <form action="/api/local-auth/sign-in" method="post" className="border-t pt-3">
+          <input type="hidden" name="callbackUrl" value="/dashboard" />
           <input type="hidden" name="email" value="dev@meetmind.local" />
           <input type="hidden" name="name" value="Dev User" />
           <div className="flex items-center justify-between gap-3">
