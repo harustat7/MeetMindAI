@@ -11,7 +11,9 @@ export default async function SignInPage() {
   const emailEnabled = Boolean(process.env.EMAIL_SERVER);
   const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
   const microsoftEnabled = Boolean(process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET);
-  const devAuthEnabled = process.env.NODE_ENV !== "production" && process.env.DEV_AUTH_ENABLED === "true";
+  const localAuthEnabled =
+    process.env.LOCAL_AUTH_ENABLED === "true" ||
+    (!emailEnabled && !googleEnabled && !microsoftEnabled && process.env.LOCAL_AUTH_ENABLED !== "false");
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-5 py-8">
@@ -33,7 +35,7 @@ export default async function SignInPage() {
           </CardHeader>
           <CardContent>
             <AuthButtons
-              devAuthEnabled={devAuthEnabled}
+              localAuthEnabled={localAuthEnabled}
               emailEnabled={emailEnabled}
               googleEnabled={googleEnabled}
               microsoftEnabled={microsoftEnabled}

@@ -294,7 +294,7 @@ async function seedKnowledge(user, workspace) {
       title: "Local Development Checklist",
       sourceType: "NOTE",
       content:
-        "Minimum local setup: DATABASE_URL, NEXTAUTH_URL, APP_URL, NEXTAUTH_SECRET, DEV_AUTH_ENABLED, and OPENAI_API_KEY. Google, Microsoft, and email can remain empty until those workflows are tested."
+        "Minimum local setup: DATABASE_URL, NEXTAUTH_URL, APP_URL, NEXTAUTH_SECRET, LOCAL_AUTH_ENABLED, and OPENAI_API_KEY. Google, Microsoft, and email can remain empty until those workflows are tested."
     },
     {
       title: "MeetMind Demo Positioning",

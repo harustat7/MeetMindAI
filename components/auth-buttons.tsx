@@ -7,15 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type AuthButtonsProps = {
-  devAuthEnabled: boolean;
+  localAuthEnabled: boolean;
   emailEnabled: boolean;
   googleEnabled: boolean;
   microsoftEnabled: boolean;
 };
 
-export function AuthButtons({ devAuthEnabled, emailEnabled, googleEnabled, microsoftEnabled }: AuthButtonsProps) {
-  const localEmailEnabled = devAuthEnabled && !emailEnabled;
-
+export function AuthButtons({ localAuthEnabled, emailEnabled, googleEnabled, microsoftEnabled }: AuthButtonsProps) {
   return (
     <div className="space-y-3">
       {googleEnabled || microsoftEnabled ? (
@@ -55,8 +53,8 @@ export function AuthButtons({ devAuthEnabled, emailEnabled, googleEnabled, micro
         </form>
       ) : null}
 
-      {localEmailEnabled ? (
-        <form action="/api/dev-auth/sign-in" method="post" className="space-y-3">
+      {localAuthEnabled && !emailEnabled ? (
+        <form action="/api/local-auth/sign-in" method="post" className="space-y-3">
           <div>
             <Label htmlFor="local-email">Work email</Label>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Create or open your workspace with this email.</p>
@@ -74,8 +72,8 @@ export function AuthButtons({ devAuthEnabled, emailEnabled, googleEnabled, micro
         </form>
       ) : null}
 
-      {devAuthEnabled ? (
-        <form action="/api/dev-auth/sign-in" method="post" className="border-t pt-3">
+      {localAuthEnabled ? (
+        <form action="/api/local-auth/sign-in" method="post" className="border-t pt-3">
           <input type="hidden" name="email" value="dev@meetmind.local" />
           <input type="hidden" name="name" value="Dev User" />
           <div className="flex items-center justify-between gap-3">
