@@ -13,6 +13,14 @@ function localAuthEnabled() {
   return process.env.LOCAL_AUTH_ENABLED === "true" || (!providerConfigured && process.env.LOCAL_AUTH_ENABLED !== "false");
 }
 
+function getRedirectUrl(request: NextRequest, callbackUrl: FormDataEntryValue | null) {
+  const appUrl = process.env.APP_URL ?? process.env.NEXTAUTH_URL;
+  const baseUrl = appUrl ? new URL(appUrl) : new URL(request.url);
+  const requestedPath = typeof callbackUrl === "string" && callbackUrl.startsWith("/") ? callbackUrl : "/dashboard";
+
+  return new URL(requestedPath, baseUrl);
+}
+
 export async function POST(request: NextRequest) {
   if (!localAuthEnabled()) {
     return NextResponse.json({ error: "Local email auth is disabled" }, { status: 404 });
@@ -41,14 +49,20 @@ export async function POST(request: NextRequest) {
     }
   });
 
-  const response = NextResponse.redirect(new URL("/dashboard", request.url), { status: 303 });
-  response.cookies.set("next-auth.session-token", sessionToken, {
+  const response = NextResponse.redirect(getRedirectUrl(request, formData.get("callbackUrl")), { status: 303 });
+  const cookieOptions = {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
     expires
-  });
+  } as const;
+
+  response.cookies.set("next-auth.session-token", sessionToken, cookieOptions);
+
+  if (process.env.NODE_ENV === "production") {
+    response.cookies.set("__Secure-next-auth.session-token", sessionToken, cookieOptions);
+  }
 
   return response;
 }
